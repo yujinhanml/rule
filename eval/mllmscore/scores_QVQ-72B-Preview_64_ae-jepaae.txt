@@ -1,0 +1,3 @@
+Train image scores: [None, None, None, None, None, None, None, None, None, None]
+AE image scores: [None, None, None, None, None, None, None, None, None, None]
+JEPA-AE image scores: [None, None, None, None, None, None, None, None, None, None]

@@ -1,0 +1,3 @@
+Train image scores: [8, 3, 0, 8, 8, 2, 2, 8, 2, 2]
+AE image scores: [8, 2, 3, 8, 3, 3, 2, 2, 8, 3]
+JEPA-AE image scores: [3, 5, 3, 2, 3, 2, 3, 3, 3, 3]
