@@ -51,7 +51,7 @@ warnings.filterwarnings('ignore')
 # TORCH_LOGS="+dynamo"
 # TORCHDYNAMO_VERBOSE=1 
 # torch._dynamo.config.suppress_errors = True
-# wandb.login(key='93c0c34cd7bfd22da42731056e3e9d33691dd6fb')
+wandb.login(key='0f21b24952669c2e92e46d4e963262d4fb2e2578')
 # torch._dynamo.config.optimize_ddp = False
 # torch._dynamo.config.automatic_dynamic_shapes = False
 # torch._inductor.config.allow_buffer_reuse = False
