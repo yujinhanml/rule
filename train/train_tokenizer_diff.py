@@ -88,7 +88,7 @@ def main(args):
             file_yaml = yaml.YAML()
             file_yaml.dump(experiment_config, f)
         
-        wandb_logger = wandb.init(project='tokenizer', name=f'{args.dataset}-exp{experiment_index:03d}-{model_string_name}')
+        wandb_logger = wandb.init(project='rule-tokenizer', name=f'{args.dataset}-exp{experiment_index:03d}-{model_string_name}')
     else:
         logger = create_logger(None)
         wandb_logger = None
