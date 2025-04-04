@@ -9,9 +9,9 @@ mixed_precision: bf16
 no_local_save: True
 
 dataset: mirror
-data_path: /cpfs04/user/hanyujin/rule-gen/datasets/mirrors_train
-val_data_path: /cpfs04/user/hanyujin/rule-gen/datasets/mirrors_val
-image_size: 64
+data_path: /project/flame/haoc3/rule_tokenizer/mirrors_train
+val_data_path: /project/flame/haoc3/rule_tokenizer/mirrors_val
+image_size: 128
 
 vq_model: AE-Diff-16
 ema: True 
