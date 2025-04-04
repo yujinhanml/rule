@@ -14,7 +14,7 @@ source ~/.bashrc
 conda activate yjenv  # <<< 替换成你自己的环境名
 
 # 进入你的代码目录
-cd /cpfs04/user/hanyujin/rule-gen/
+cd /project/flame/haoc3/rule_tokenizer/rule/
 
 # 创建 log 目录（如果没创建）
 mkdir -p logs
