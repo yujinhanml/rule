@@ -19,7 +19,7 @@ def extract_data_from_hdf5(hdf5_path: str):
 
 def main():
     extract_dir = "extracted_batch_1"
-    dest_root = "/cpfs04/user/hanyujin/rule-gen/datasets/mirrors"
+    dest_root = "/project/flame/haoc3/rule_tokenizer/Rule-Tokenizer/datasets/mirrors"
     dest_dirs = {
         "middle": os.path.join(dest_root, "middle"),
         "left": os.path.join(dest_root, "left"),
