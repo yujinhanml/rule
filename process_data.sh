@@ -3,7 +3,7 @@
 #SBATCH --output=slurm-%j.out
 #SBATCH --error=slurm-%j.err
 #SBATCH --time=12:00:00
-#SBATCH --partition=orchard-community-0
+#SBATCH --partition=community
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=4
 
