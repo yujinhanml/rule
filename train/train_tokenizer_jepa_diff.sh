@@ -7,19 +7,20 @@
 #SBATCH --gres=gpu:8
 #SBATCH --mem=1000G
 #SBATCH --time=48:00:00
-#SBATCH --output=output_%j.log
+#SBATCH --output=logs/output_%j.out
+#SBATCH --error=logs/error_%j.err
 
-# 你环境的设置
+# 出错立即终止脚本
+set -o errexit -o nounset -o pipefail
+
+# 环境设置
 source ~/.bashrc
-conda activate yjenv  # <<< 替换成你自己的环境名
+conda activate yjenv
 
-# 进入你的代码目录
+# 切换目录
 cd /project/flame/haoc3/rule_tokenizer/rule/
-
-# 创建 log 目录（如果没创建）
 mkdir -p logs
 
-# 运行训练
+# 启动训练
 torchrun --nproc_per_node=4 -m train.train_tokenizer_jepa_diff \
-  --config  /project/flame/haoc3/rule_tokenizer/rule/configs/in1k/exp006-aejepadiff-16.yaml
-
+  --config /project/flame/haoc3/rule_tokenizer/rule/configs/in1k/exp006-aejepadiff-16.yaml
