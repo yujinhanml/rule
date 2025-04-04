@@ -16,8 +16,8 @@ start_batch=1
 end_batch=134
 dataset_url="https://huggingface.co/datasets/cs-mshah/SynMirror/resolve/main"
 extract_dir="extracted_batch_1"
-log_dir="download_logs"
-output_dir="/project/flame/haoc3/rule_tokenizer/Rule-Tokenizer/datasets/mirrors"
+log_dir="/project/flame/haoc3/rule_tokenizer/rule/datasets/mirrors_download_logs"
+output_dir="/project/flame/haoc3/rule_tokenizer/rule/datasets/mirrors"
 
 mkdir -p $log_dir
 
