@@ -9,9 +9,9 @@ mixed_precision: bf16
 no_local_save: True
 
 dataset: mirror
-data_path: /cpfs04/user/hanyujin/rule-gen/datasets/mirrors_train
-val_data_path: /cpfs04/user/hanyujin/rule-gen/datasets/mirrors_val
-image_size: 64
+data_path: /project/flame/haoc3/rule_tokenizer/mirrors_train
+val_data_path: /project/flame/haoc3/rule_tokenizer/mirrors_val
+image_size: 128
 
 vq_model: AE-JEPA-Diff-16
 ema: True 
@@ -21,12 +21,12 @@ codebook_embed_dim: 32
 enc_type: vit
 encoder_model: vit_base_patch14_dinov2.lvd142m
 encoder_pretrained: False
-encoder_patch_size: 4
+encoder_patch_size: 8
 encoder_tuning_method: full
 dec_type: sit
 decoder_model: SiT-B
 decoder_pretrained: False 
-decoder_patch_size: 4
+decoder_patch_size: 8
 decoder_tuning_method: full
 
 epochs: 200
