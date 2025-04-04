@@ -21,5 +21,5 @@ mkdir -p logs
 
 # 运行训练
 torchrun --nproc_per_node=4 -m train.train_tokenizer_jepa_diff \
-  --config /cpfs04/user/hanyujin/rule-gen/rule_tokenizer/configs/in1k/exp006-aejepadiff-16.yaml
+  --config  /project/flame/haoc3/rule_tokenizer/rule/configs/in1k/exp006-aejepadiff-16.yaml
 
