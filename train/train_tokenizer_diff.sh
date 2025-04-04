@@ -22,5 +22,5 @@ cd /project/flame/haoc3/rule_tokenizer/rule/
 mkdir -p logs
 
 # 启动训练
-torchrun --nproc_per_node=4 -m train.train_tokenizer_jepa_diff \
-  --config /project/flame/haoc3/rule_tokenizer/rule/configs/in1k/exp006-aejepadiff-16.yaml
+torchrun --nproc_per_node=4 -m train.train_tokenizer_diff \
+  --config /project/flame/haoc3/rule_tokenizer/rule/configs/in1k/exp007-aediff-16.yaml
