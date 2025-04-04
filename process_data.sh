@@ -4,8 +4,8 @@
 #SBATCH --partition=preempt
 #SBATCH --ntasks-per-node=8
 #SBATCH --cpus-per-task=12
-#SBATCH --gres=gpu:8-
-#SBATCH -mem=1000G
+#SBATCH --gres=gpu:8
+#SBATCH --mem=1000G
 #SBATCH --time=48:00:00
 #SBATCH --output=output_%j.log
 
