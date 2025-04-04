@@ -42,7 +42,7 @@ from torchmetrics.image.fid import FrechetInceptionDistance
 import warnings
 warnings.filterwarnings('ignore')
 
-
+wandb.login(key='0f21b24952669c2e92e46d4e963262d4fb2e2578')
 
 #################################################################################
 #                                  Training Loop                                #
