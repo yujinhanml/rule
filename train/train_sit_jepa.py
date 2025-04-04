@@ -36,7 +36,7 @@ from utils.data import CachedFolder
 from utils.model import build_tokenizer
 
 logger = get_logger(__name__)
-
+wandb.login(key='0f21b24952669c2e92e46d4e963262d4fb2e2578')
 
 
 def array2grid(x):
