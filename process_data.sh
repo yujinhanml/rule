@@ -1,16 +1,18 @@
 #!/bin/bash
 #SBATCH --job-name=process_data
-#SBATCH --output=slurm-%j.out
-#SBATCH --error=slurm-%j.err
-#SBATCH --time=12:00:00
-#SBATCH --partition=community
-#SBATCH --mem=16G
-#SBATCH --cpus-per-task=4
+#SBATCH --nodes=1
+#SBATCH --partition=preempt
+#SBATCH --ntasks-per-node=8
+#SBATCH --cpus-per-task=12
+#SBATCH --gres=gpu:8-
+#SBATCH -mem=1000G
+#SBATCH --time=48:00:00
+#SBATCH --output=output_%j.log
 
 # 实时日志刷新
 exec > >(stdbuf -oL tee slurm_log.out) 2>&1
 
-start_batch=0
+start_batch=1
 end_batch=134
 dataset_url="https://huggingface.co/datasets/cs-mshah/SynMirror/resolve/main"
 extract_dir="extracted_batch_1"
