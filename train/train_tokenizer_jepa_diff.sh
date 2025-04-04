@@ -10,14 +10,13 @@
 #SBATCH --output=logs/output_%j.out
 #SBATCH --error=logs/error_%j.err
 
-# 出错立即终止脚本
-set -o errexit -o nounset -o pipefail
+set -x
+set -e
 
-# 环境设置
-source ~/.bashrc
+# ✅ 初始化 conda
+source /project/flame/haoc3/conda3/etc/profile.d/conda.sh
 conda activate yjenv
 
-# 切换目录
 cd /project/flame/haoc3/rule_tokenizer/rule/
 mkdir -p logs
 
