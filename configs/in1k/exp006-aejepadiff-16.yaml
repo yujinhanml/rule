@@ -1,4 +1,4 @@
-results_dir: /cpfs04/user/hanyujin/rule-gen/experiments/tokenizer
+results_dir: /project/flame/haoc3/rule_tokenizer/experiments/tokenizer
 cloud_save_path: ./experiments/in1k
 compile: False
 global_seed: 42
