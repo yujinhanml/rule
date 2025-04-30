@@ -48,7 +48,7 @@ perceptual_loss_weight = 5
 epoch_interval = 10
 max_token = 25 #25 #37
 input_dim = 3584
-batch_size = 64
+batch_size = 16
 connector_type = 'mlp' # "transformer" # "Covntransformer" #'mlp'
 prompt_type = 'full'
 device = torch.device(f"cuda:{gpu_id}" if torch.cuda.is_available() else "cpu")
@@ -289,64 +289,21 @@ class DigitSeqDataset(Dataset):
 # data_path = "/cpfs04/user/hanyujin/rule-gen/datasets/mnist-mnist-seq/images"
 # dataset = DigitSeqDataset(data_path, transform=transform,shuffle_ratio=shuffle_ratio)
 
-# class MixedDigitSeqDataset(Dataset):
-#     def __init__(self, dataset1, dataset2):
-#         self.dataset1 = dataset1
-#         self.dataset2 = dataset2
-#         self.length = min(len(dataset1), len(dataset2)) * 2  # 1:1 混合
-
-#     def __len__(self):
-#         return self.length
-
-#     def __getitem__(self, idx):
-#         if idx % 2 == 0:
-#             return self.dataset1[idx // 2]
-#         else:
-#             return self.dataset2[idx // 2]
-
 class MixedDigitSeqDataset(Dataset):
-    def __init__(self, dataset1, dataset2, mix_ratio=0.5):
-        """
-        :param dataset1: 第一个数据集
-        :param dataset2: 第二个数据集
-        :param mix_ratio: dataset1 占的比例，0.0 ~ 1.0，默认 0.5 表示 1:1 混合
-        """
+    def __init__(self, dataset1, dataset2):
         self.dataset1 = dataset1
         self.dataset2 = dataset2
-        self.mix_ratio = mix_ratio
-
-        self.len1 = len(dataset1)
-        self.len2 = len(dataset2)
-
-        # 计算每个数据集的样本数量
-        total_len = self.len1 + self.len2
-        self.num_samples1 = int((self.len1 / total_len) * mix_ratio * total_len)
-        self.num_samples2 = int((self.len2 / total_len) * (1 - mix_ratio) * total_len)
-
-        # 防止 total length 过小
-        self.length = self.num_samples1 + self.num_samples2
-        self.indices = self._generate_indices()
-
-    def _generate_indices(self):
-        indices = []
-        # dataset1 样本索引
-        for i in range(self.num_samples1):
-            indices.append(('dataset1', i % self.len1))
-        # dataset2 样本索引
-        for i in range(self.num_samples2):
-            indices.append(('dataset2', i % self.len2))
-        random.shuffle(indices)
-        return indices
+        self.length = min(len(dataset1), len(dataset2)) * 2  # 1:1 混合
 
     def __len__(self):
         return self.length
 
     def __getitem__(self, idx):
-        source, real_idx = self.indices[idx]
-        if source == 'dataset1':
-            return self.dataset1[real_idx]
+        if idx % 2 == 0:
+            return self.dataset1[idx // 2]
         else:
-            return self.dataset2[real_idx]
+            return self.dataset2[idx // 2]
+
 
 # 初始化两个数据集
 data_path_pos = "/cpfs04/user/hanyujin/rule-gen/datasets/mnist-mnist-seq-pos/images"
@@ -357,7 +314,7 @@ dataset_neg = DigitSeqNegDataset(pos_dir=data_path_pos, neg_dir=data_path_neg, t
 dataset_rand = DigitSeqDataset(image_dir=data_path_rand, transform=transform, shuffle_ratio=shuffle_ratio)
 
 # 创建混合数据集
-mixed_dataset = MixedDigitSeqDataset(dataset_neg, dataset_rand, mix_ratio=0.2)
+mixed_dataset = MixedDigitSeqDataset(dataset_neg, dataset_rand)
 
 # 用法
 train_loader = DataLoader(mixed_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
@@ -542,12 +499,8 @@ print(f"The connector is {connector_type}")
 for param in mllm_model.parameters():
     param.requires_grad = False
 
-for param in vae.encoder.parameters():
+for param in vae.parameters():
     param.requires_grad = False
-
-for param in vae.decoder.parameters():
-    param.requires_grad = True
-
 
 # Step 2: dummy 输入初始化 projector 参数（以当前 batch 的 token 数为准）
 # with torch.no_grad():
@@ -555,18 +508,10 @@ for param in vae.decoder.parameters():
 #     _ = connector(dummy_hidden)
 
 
-# optimizer = torch.optim.Adam(connector.parameters(), lr=1e-4)
-
-
-optimizer = torch.optim.Adam(
-    list(connector.parameters()) + list(vae.decoder.parameters()),
-    lr=1e-4
-)
-
-
+optimizer = torch.optim.Adam(connector.parameters(), lr=1e-4)
 wandb_logger = wandb.init(
     project="tokenizer",
-    name=f"Mix-{prompt_type}-{vae_type}-connector{connector_type}-mnist-mnist-epoch{num_epochs}-recon_weight{recon_weight}-ori_weight{ori_weight}-perceptual{perceptual_loss_weight}-shuffle{shuffle_ratio}-lastoken-ftdecoder"
+    name=f"Mix-{prompt_type}-{vae_type}-connector{connector_type}-mnist-mnist-epoch{num_epochs}-recon_weight{recon_weight}-ori_weight{ori_weight}-perceptual{perceptual_loss_weight}-shuffle{shuffle_ratio}-lastoken"
 )
 # Shuffle hard
 #         easy
@@ -625,7 +570,7 @@ for epoch in trange(num_epochs):
             # truncation=True,
             # max_length=max_token,
         ).to(device)
-        print("inputs:",len(inputs['input_ids']),inputs['pixel_values'].shape)
+
         with torch.no_grad():
             outputs = mllm_model(**inputs, output_hidden_states=True, return_dict=True)
         hidden_states = outputs.hidden_states[-1][:, -1, :].to(torch.float32)  # [B, max_token, 3584]
@@ -702,15 +647,11 @@ for epoch in trange(num_epochs):
     if epoch % epoch_interval == 0:
         print(f"[Epoch {epoch}] semantic_loss: {semantic_loss.item():.4f}, recon_pixel_loss: {recon_pixel_loss.item():.4f}, ori_pixel_loss: {ori_pixel_loss.item():.4f}, total_loss: {total_loss.item():.4f}")
 
-        ckpt_dir = f"/cpfs04/user/hanyujin/rule-gen/rule_tokenizer/connector/checkpoints/Mix-{prompt_type}-{vae_type}-connector{connector_type}_weight{recon_weight}-ori_weight{ori_weight}-perceptual{perceptual_loss_weight}_shuffle{shuffle_ratio}-lastoken-ftdecoder"
+        ckpt_dir = f"/cpfs04/user/hanyujin/rule-gen/rule_tokenizer/connector/checkpoints/Mix-{prompt_type}-{vae_type}-connector{connector_type}_weight{recon_weight}-ori_weight{ori_weight}-perceptual{perceptual_loss_weight}_shuffle{shuffle_ratio}-lastoken"
         os.makedirs(ckpt_dir, exist_ok=True)
         ckpt_path = os.path.join(ckpt_dir, f"epoch{epoch}.pt")
         torch.save(connector.state_dict(), ckpt_path)
         print(f"✅ Saved MLP checkpoint to {ckpt_path}")
-
-        vae_decoder_ft_path = vae_ckpt_path.replace(".pt", f"_decoder_ft_epoch{epoch}.pt")
-        torch.save(vae.decoder.state_dict(), vae_decoder_ft_path)
-
 
 
 # for epoch in trange(num_epochs):
